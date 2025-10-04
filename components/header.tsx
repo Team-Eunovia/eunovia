@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Navbar,
@@ -11,98 +11,100 @@ import {
   Link,
   Button,
   Image,
-} from '@heroui/react'
+} from "@heroui/react";
 
 const links = [
   {
-    href: '/articles',
-    text: '아티클',
+    href: "/articles",
+    text: "아티클",
   },
   {
-    href: '/subscription',
-    text: '구독',
+    href: "/subscription",
+    text: "구독",
   },
-]
+];
 
 export const Header = () => {
-  const menuItems = [
-    'Profile',
-    'Dashboard',
-    'Activity',
-    'Analytics',
-    'System',
-    'Deployments',
-    'My Settings',
-    'Team Settings',
-    'Help & Feedback',
-    'Log Out',
-  ]
-
   return (
-    <Navbar disableAnimation isBordered>
-      <NavbarContent className='sm:hidden' justify='start'>
+    <Navbar
+      disableAnimation
+      isBordered
+      shouldHideOnScroll
+      className="bg-brand-background/70"
+      maxWidth="xl"
+    >
+      <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle />
       </NavbarContent>
 
-      <NavbarContent className='sm:hidden pr-3' justify='center'>
-        <NavbarBrand className='gap-2' as={Link} href='/'>
+      <NavbarContent className="sm:hidden pr-3" justify="center">
+        <NavbarBrand as={Link} className="gap-2" href="/">
           <Image
-            radius='none'
-            alt='logo image'
-            src='/favicon/android-chrome-192x192.png'
-            width={28}
+            alt="logo image"
             height={28}
+            radius="none"
+            src="/favicon/android-chrome-192x192.png"
+            width={28}
           />
-          <Image radius='none' alt='logo text' src='/logo-text.svg' width={90} height={28} />
+          <Image
+            alt="logo text"
+            height={28}
+            radius="none"
+            src="/logo-text.svg"
+            width={90}
+          />
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className='hidden sm:flex gap-4' justify='center'>
-        <NavbarBrand className='gap-2' as={Link} href='/'>
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarBrand as={Link} className="gap-2" href="/">
           <Image
-            radius='none'
-            alt='logo image'
-            src='/favicon/android-chrome-192x192.png'
-            width={28}
+            alt="logo image"
             height={28}
+            radius="none"
+            src="/favicon/android-chrome-192x192.png"
+            width={28}
           />
-          <Image radius='none' alt='logo text' src='/logo-text.svg' width={90} />
+          <Image
+            alt="logo text"
+            radius="none"
+            src="/logo-text.svg"
+            width={90}
+          />
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent justify='end' className='space-x-8'>
-        <div className='hidden sm:flex items-center gap-6 '>
+      <NavbarContent className="space-x-8" justify="end">
+        <div className="hidden sm:flex items-center gap-6 ">
           {links.map((link) => (
             <NavbarItem key={link.href}>
-              <Link color='foreground' href={link.href}>
+              <Link color="foreground" href={link.href}>
                 {link.text}
               </Link>
             </NavbarItem>
           ))}
         </div>
         <NavbarItem>
-          <Button as={Link} color='warning' href='#' variant='flat'>
+          <Button as={Link} color="warning" href="#" variant="flat">
             로그인
           </Button>
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+      <NavbarMenu className="bg-brand-background">
+        {links.map((link) => (
+          <NavbarMenuItem key={link.href}>
             <Link
-              className='w-full'
-              color={
-                index === 2 ? 'warning' : index === menuItems.length - 1 ? 'danger' : 'foreground'
-              }
-              href='#'
-              size='lg'
+              className="w-full"
+              color="foreground"
+              href={link.href}
+              size="lg"
             >
-              {item}
+              {link.text}
             </Link>
           </NavbarMenuItem>
         ))}
       </NavbarMenu>
     </Navbar>
-  )
-}
+  );
+};

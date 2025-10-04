@@ -36,26 +36,24 @@ export default function Page() {
                   {post.content}
                 </p>
               </div>
-            </div>
-
-            <div className='relative h-40'>
-              {post.thumbnail_image && (
-                <NextImage
-                  alt='thumbnail'
-                  src={post.thumbnail_image}
-                  width={320}
-                  height={240}
-                  className='absolute inset-0 size-full object-cover rounded-lg'
-                />
-              )}
-              <div className='flex gap-3 shrink-0 text-default-50 absolute p-3 bottom-3 right-3 rounded-lg bg-default-900/20 backdrop-blur-[1px] border border-warning-900/10'>
+              <div className='flex gap-3 shrink-0 text-default-50'>
                 <Image height={30} radius='sm' src={post.author.author_profile_image} width={30} />
-                <div className='text-xs space-y-0.5'>
+                <div className='text-xs space-y-0.5 text-default-600'>
                   <p>{post.author.author_name}</p>
                   <p>{dayjs(post.created_at).format('YYYY년 M월 D일')}</p>
                 </div>
               </div>
             </div>
+
+            {post.thumbnail_image && (
+              <NextImage
+                alt='thumbnail'
+                src={post.thumbnail_image}
+                width={320}
+                height={240}
+                className='aspect-video size-full object-cover rounded-lg'
+              />
+            )}
           </Link>
         ))}
       </div>

@@ -8,6 +8,17 @@ import { PlusIcon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
 import { useQueryState } from 'nuqs'
+import { Suspense } from 'react'
+
+export default function Page() {
+  return (
+    <div className='flex-1 sm:px-4 pt-10 md:pt-20 space-y-6'>
+      <Suspense>
+        <Articles />
+      </Suspense>
+    </div>
+  )
+}
 
 const faker = new Faker({
   locale: [ko],
@@ -15,7 +26,7 @@ const faker = new Faker({
 
 const categories = ['모든 글', '별', '우주', '그리고 사람']
 
-export default function Page() {
+const Articles = () => {
   const [category, setCategory] = useQueryState('category')
 
   const postsWithUser = posts.map((post) => ({
@@ -32,13 +43,13 @@ export default function Page() {
       : postsWithUser
 
   return (
-    <div className='flex-1 sm:px-4 pt-10 md:pt-20 space-y-6'>
+    <>
       <div className='px-4 sm:px-0'>
         <Select
-          variant='faded'
-          className='max-w-36'
           aria-label='카테고리를 선택해주세요'
+          className='max-w-36'
           selectedKeys={[category || '모든 글']}
+          variant='faded'
           onChange={(e) => {
             if (e.target.value) setCategory(e.target.value)
           }}
@@ -67,10 +78,10 @@ export default function Page() {
               {post.thumbnail_image ? (
                 <NextImage
                   alt='thumbnail'
+                  className='aspect-square size-full object-cover rounded-lg w-16 md:w-20'
+                  height={100}
                   src={post.thumbnail_image}
                   width={100}
-                  height={100}
-                  className='aspect-square size-full object-cover rounded-lg w-16 md:w-20'
                 />
               ) : (
                 <div className='size-20' />
@@ -103,6 +114,6 @@ export default function Page() {
           </Link>
         ))}
       </div>
-    </div>
+    </>
   )
 }

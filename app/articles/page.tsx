@@ -2,16 +2,22 @@
 
 import { posts } from '@/lib/constants'
 import { Faker, ko } from '@faker-js/faker'
-import { Image } from '@heroui/react'
+import { Image, Select, SelectItem } from '@heroui/react'
 import dayjs from 'dayjs'
+import { PlusIcon } from 'lucide-react'
 import NextImage from 'next/image'
 import Link from 'next/link'
+import { useQueryState } from 'nuqs'
 
 const faker = new Faker({
   locale: [ko],
 })
 
+const categories = ['모든 글', '별', '우주', '그리고 사람']
+
 export default function Page() {
+  const [category, setCategory] = useQueryState('category')
+
   const postsWithUser = posts.map((post) => ({
     ...post,
     author: {
@@ -20,40 +26,80 @@ export default function Page() {
     },
   }))
 
+  const postsFilteredWithCategory =
+    category && category !== '모든 글'
+      ? postsWithUser.filter((post) => post.category === category)
+      : postsWithUser
+
   return (
-    <div className='flex-1 relative'>
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 divide-y divide-default-800/15 md:border-t border-default-800/15 sm:divide-x border-l'>
-        {postsWithUser.map((post) => (
+    <div className='flex-1 sm:px-4 pt-10 md:pt-20 space-y-6'>
+      <div className='px-4 sm:px-0'>
+        <Select
+          variant='faded'
+          className='max-w-36'
+          aria-label='카테고리를 선택해주세요'
+          selectedKeys={[category || '모든 글']}
+          onChange={(e) => {
+            if (e.target.value) setCategory(e.target.value)
+          }}
+        >
+          {categories.map((c) => (
+            <SelectItem key={c}>{c}</SelectItem>
+          ))}
+        </Select>
+      </div>
+
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 divide-y divide-default-800/7 border-t border-default-800/7 sm:divide-x border-l'>
+        {postsFilteredWithCategory.map((post, index) => (
           <Link
             key={post.id}
-            className='px-4 sm:px-6 py-6 space-y-6 last:border-r last:border-b last:border-default-800/15 hover:bg-default-700/5 flex flex-col'
+            className='px-4 sm:px-6 py-6 space-y-3 last:border-r last:border-b last:border-default-800/7 hover:bg-default-700/5 flex flex-col relative'
             href={`/posts/${post.id}`}
           >
+            {index === 0 && (
+              <PlusIcon className='stroke-1 size-8 absolute -left-[16px] -top-[16px] stroke-default-700/30' />
+            )}
+            {index === postsFilteredWithCategory.length - 1 && (
+              <PlusIcon className='stroke-1 size-8 absolute -bottom-[28px] -right-[16px] stroke-default-700/30' />
+            )}
+
+            <div className='flex justify-between'>
+              {post.thumbnail_image ? (
+                <NextImage
+                  alt='thumbnail'
+                  src={post.thumbnail_image}
+                  width={100}
+                  height={100}
+                  className='aspect-square size-full object-cover rounded-lg w-16 md:w-20'
+                />
+              ) : (
+                <div className='size-20' />
+              )}
+
+              <p className='text-xs text-default-400'>
+                {dayjs(post.created_at).format('YYYY년 M월 D일')}
+              </p>
+            </div>
+
             <div className='space-y-4'>
               <div className='space-y-2 flex-1 w-full'>
-                <p className='text-2xl font-semibold truncate w-full'>{post.title}</p>
-                <p className='text-sm truncate break-words whitespace-normal line-clamp-2 text-default-600'>
+                <p className='text-base sm:text-xl font-semibold truncate w-full'>{post.title}</p>
+                <p className='text-xs sm:text-sm truncate break-words whitespace-normal line-clamp-2 text-default-400'>
                   {post.content}
                 </p>
               </div>
-              <div className='flex gap-3 shrink-0 text-default-50'>
-                <Image height={30} radius='sm' src={post.author.author_profile_image} width={30} />
-                <div className='text-xs space-y-0.5 text-default-600'>
-                  <p>{post.author.author_name}</p>
-                  <p>{dayjs(post.created_at).format('YYYY년 M월 D일')}</p>
-                </div>
+              <div className='flex gap-2 shrink-0 items-center'>
+                <Image
+                  height={20}
+                  radius='full'
+                  src={post.author.author_profile_image}
+                  width={20}
+                />
+                <p className='text-xs space-y-0.5 text-default-400 font-semibold'>
+                  {post.author.author_name}
+                </p>
               </div>
             </div>
-
-            {post.thumbnail_image && (
-              <NextImage
-                alt='thumbnail'
-                src={post.thumbnail_image}
-                width={320}
-                height={240}
-                className='aspect-video size-full object-cover rounded-lg'
-              />
-            )}
           </Link>
         ))}
       </div>

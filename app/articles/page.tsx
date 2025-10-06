@@ -2,7 +2,7 @@
 
 import { posts } from '@/lib/constants'
 import { Faker, ko } from '@faker-js/faker'
-import { Image, Select, SelectItem } from '@heroui/react'
+import { Button, Image, Select, SelectItem } from '@heroui/react'
 import dayjs from 'dayjs'
 import { PlusIcon } from 'lucide-react'
 import NextImage from 'next/image'
@@ -44,7 +44,7 @@ const Articles = () => {
 
   return (
     <>
-      <div className='px-4 sm:px-0'>
+      <div className='px-4 sm:px-0 flex items-center justify-between'>
         <Select
           aria-label='카테고리를 선택해주세요'
           className='max-w-36'
@@ -58,6 +58,10 @@ const Articles = () => {
             <SelectItem key={c}>{c}</SelectItem>
           ))}
         </Select>
+
+        <Button color='primary' as={Link} href='/articles/upload'>
+          글 작성하기
+        </Button>
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 divide-y divide-default-800/7 border-t border-default-800/7 sm:divide-x border-l'>

@@ -68,7 +68,7 @@ const Articles = () => {
         {postsFilteredWithCategory.map((post, index) => (
           <Link
             key={post.id}
-            className='px-4 sm:px-6 py-6 space-y-3 last:border-r last:border-b last:border-default-800/7 hover:bg-default-700/5 flex flex-col relative'
+            className='px-4 sm:px-6 py-6 space-y-6 last:border-r last:border-b last:border-default-800/7 hover:bg-default-700/5 flex flex-col relative bg-[#fafafa]'
             href={`/posts/${post.id}`}
           >
             {index === 0 && (
@@ -78,40 +78,39 @@ const Articles = () => {
               <PlusIcon className='stroke-1 size-8 absolute -bottom-[28px] -right-[16px] stroke-default-700/30' />
             )}
 
-            <div className='flex justify-between'>
-              {post.thumbnail_image ? (
-                <NextImage
-                  alt='thumbnail'
-                  className='aspect-square size-full object-cover rounded-lg w-16 md:w-20'
-                  height={100}
-                  src={post.thumbnail_image}
-                  width={100}
-                />
-              ) : (
-                <div className='size-20' />
-              )}
+            {post.thumbnail_image && (
+              <NextImage
+                alt='thumbnail'
+                className='object-cover rounded-lg h-32 sm:h-28 w-full'
+                height={320}
+                src={post.thumbnail_image}
+                width={240}
+              />
+            )}
 
-              <p className='text-xs text-default-400'>
-                {dayjs(post.created_at).format('YYYY년 M월 D일')}
-              </p>
-            </div>
-
-            <div className='space-y-4'>
+            <div className='space-y-6'>
               <div className='space-y-2 flex-1 w-full'>
-                <p className='text-base sm:text-xl font-semibold truncate w-full'>{post.title}</p>
-                <p className='text-xs sm:text-sm truncate break-words whitespace-normal line-clamp-2 text-default-400'>
+                <p className='text-lg sm:text-xl font-semibold truncate w-full'>{post.title}</p>
+                <p className='text-sm truncate break-words whitespace-normal line-clamp-2 text-default-400'>
                   {post.content}
                 </p>
               </div>
-              <div className='flex gap-2 shrink-0 items-center'>
-                <Image
-                  height={20}
-                  radius='full'
-                  src={post.author.author_profile_image}
-                  width={20}
-                />
-                <p className='text-xs space-y-0.5 text-default-400 font-semibold'>
-                  {post.author.author_name}
+
+              <div className='flex items-center justify-between'>
+                <div className='flex gap-2 shrink-0 items-center'>
+                  <Image
+                    height={20}
+                    radius='full'
+                    src={post.author.author_profile_image}
+                    width={20}
+                  />
+                  <p className='text-xs space-y-0.5 text-default-400 font-semibold'>
+                    {post.author.author_name}
+                  </p>
+                </div>
+
+                <p className='text-xs text-default-400'>
+                  {dayjs(post.created_at).format('YYYY년 M월 D일')}
                 </p>
               </div>
             </div>

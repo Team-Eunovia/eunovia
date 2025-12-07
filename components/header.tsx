@@ -7,7 +7,7 @@ import { Spinner } from './ui/spinner'
 
 export const Header = () => {
   return (
-    <header className='px-6 flex items-center justify-between h-20 fixed top-0 w-full bg-brand/80 backdrop-blur-xs max-w-7xl left-1/2 -translate-x-1/2'>
+    <header className='px-6 flex items-center justify-between h-16 fixed top-0 w-full bg-brand/80 backdrop-blur-xs max-w-7xl left-1/2 -translate-x-1/2 z-50'>
       <Link href='/' className='hover:opacity-80'>
         <Image src='/logo-text.svg' alt='eunovia logo text' width={80} height={30} />
       </Link>

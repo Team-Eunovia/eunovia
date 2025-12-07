@@ -76,12 +76,7 @@ export const UploadArticleForm = ({ categories }: { categories: Tables<'category
             <FormItem>
               <FormLabel>제목</FormLabel>
               <FormControl>
-                <Input
-                  disabled={disabled}
-                  className='h-12 bg-background/80'
-                  placeholder='제목'
-                  {...field}
-                />
+                <Input disabled={disabled} placeholder='제목' {...field} />
               </FormControl>
             </FormItem>
           )}
@@ -119,8 +114,8 @@ export const UploadArticleForm = ({ categories }: { categories: Tables<'category
 
         <Editor setContent={setContent} />
 
-        <Button disabled={disabled} type='submit' className='self-end' size='lg'>
-          게시하기
+        <Button disabled={disabled} type='submit' className='self-end' variant='blue'>
+          발행
         </Button>
       </form>
     </Form>

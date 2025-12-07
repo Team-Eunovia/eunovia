@@ -22,7 +22,7 @@ const Contents = async () => {
   const categories = await getCategories()
 
   return (
-    <div>
+    <div className='max-w-3xl mx-auto'>
       <UploadArticleForm categories={categories} />
     </div>
   )

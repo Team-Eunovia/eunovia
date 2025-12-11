@@ -10,3 +10,13 @@ export function cn(...inputs: ClassValue[]) {
 export const formatDate = (date: string) => {
   return format(date, 'yyyy년 M월 d일', { locale: ko })
 }
+
+export const getImagePublicURL = ({
+  bucketName,
+  imagePath,
+}: {
+  bucketName: 'article_thumbnails' | 'tts'
+  imagePath: string
+}) => {
+  return `${process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL}/${bucketName}/${imagePath}`
+}

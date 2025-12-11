@@ -5,9 +5,9 @@ const links = [
   { text: 'FAQ', href: '/support/faq' },
   { text: '서비스 이용약관', href: '/policy/service' },
   { text: '개인정보 처리 방침', href: '/policy/privacy' },
-  { text: '유료 서비스 이벤트•혜택 정보 활용 및 수신', href: '/policy/marketing' },
+  // { text: '유료 서비스 이벤트•혜택 정보 활용 및 수신', href: '/policy/marketing' },
   { text: '광고 문의', href: '/advertisement' },
-  { text: '채용', href: '/employment' },
+  // { text: '채용', href: '/employment' },
   { text: '채널톡 문의', href: '/talk' },
   { text: '서비스 소개', href: '/introduction' },
 ]

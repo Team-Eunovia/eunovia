@@ -1,12 +1,14 @@
 import { SpinnerSkeleton } from '@/components/skeletons'
-import { createClient } from '@/lib/supabase/server'
-import { formatDate } from '@/lib/utils'
+import { getCategoryWithArticles } from '@/lib/apis'
+import { formatDate, getImagePublicURL } from '@/lib/utils'
+import { cacheTag } from 'next/cache'
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 
-export default async function Page({ params }: PageProps<'/categories/[category_id]'>) {
+type Params = PageProps<'/categories/[category_id]'>
+
+export default async function Page({ params }: Params) {
   return (
     <div>
       <Suspense fallback={<SpinnerSkeleton />}>
@@ -16,47 +18,43 @@ export default async function Page({ params }: PageProps<'/categories/[category_
   )
 }
 
-const Contents = async ({
-  params,
-}: {
-  params: PageProps<'/categories/[category_id]'>['params']
-}) => {
+const Contents = async ({ params }: { params: Params['params'] }) => {
   const { category_id } = await params
-  const supabase = await createClient()
 
-  const { data, error } = await supabase
-    .from('category')
-    .select(`*, article(*, profile(*))`)
-    .eq('id', Number(category_id))
-    .single()
+  return <CachedContents category_id={category_id} />
+}
 
-  if (error) notFound()
+const CachedContents = async ({ category_id }: { category_id: string }) => {
+  'use cache'
+  cacheTag(`category-${category_id}`)
+
+  const { categoryWithArticles } = await getCategoryWithArticles({ category_id })
 
   return (
     <div className='flex gap-10 flex-col lg:flex-row'>
       <div className='space-y-4 bg-brand-secondary/30 p-6 rounded-2xl block lg:hidden max-w-120'>
         <div className='flex items-center gap-3'>
-          <Image src={data.image} alt='cosmos' width={48} height={48} />
+          <Image src={categoryWithArticles.image} alt='cosmos' width={48} height={48} />
           <div>
-            <p className='text-2xl font-bold'>{data.title}</p>
-            <p className='text-sm font-semibold'>{data.sub_title}</p>
+            <p className='text-2xl font-bold'>{categoryWithArticles.title}</p>
+            <p className='text-sm font-semibold'>{categoryWithArticles.sub_title}</p>
           </div>
         </div>
-        <p className='text-foreground/90 text-sm'>{data.description}</p>
+        <p className='text-foreground/90 text-sm'>{categoryWithArticles.description}</p>
       </div>
 
       <div className='flex-1 w-full space-y-4'>
-        {data.article.map((article) => (
+        {categoryWithArticles.article.map((article) => (
           <Link
-            href={`/categories/${data.id}/articles/${article.id}`}
+            href={`/categories/${categoryWithArticles.id}/articles/${article.id}`}
             key={article.id}
             className='flex gap-4 p-6 bg-brand-secondary/40 rounded-xl hover:bg-brand-secondary/60 border border-brand-secondary/80'
           >
             <Image
-              src={
-                supabase.storage.from('article_thumbnails').getPublicUrl(article.thumbnail_image)
-                  .data.publicUrl
-              }
+              src={getImagePublicURL({
+                bucketName: 'article_thumbnails',
+                imagePath: article.thumbnail_image,
+              })}
               alt={`${article.title} 썸네일 이미지`}
               width={128}
               height={96}
@@ -88,13 +86,13 @@ const Contents = async ({
       <div className='shrink-0 w-100 hidden lg:block space-y-10'>
         <div className='space-y-6 bg-brand-secondary/30 p-8 rounded-2xl'>
           <div className='flex items-center gap-3'>
-            <Image src={data.image} alt='cosmos' width={60} height={60} />
+            <Image src={categoryWithArticles.image} alt='cosmos' width={60} height={60} />
             <div>
-              <p className='text-2xl font-bold'>{data.title}</p>
-              <p className='text-sm font-semibold'>{data.sub_title}</p>
+              <p className='text-2xl font-bold'>{categoryWithArticles.title}</p>
+              <p className='text-sm font-semibold'>{categoryWithArticles.sub_title}</p>
             </div>
           </div>
-          <p className='text-foreground/90 text-sm'>{data.description}</p>
+          <p className='text-foreground/90 text-sm'>{categoryWithArticles.description}</p>
         </div>
       </div>
     </div>

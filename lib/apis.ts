@@ -1,11 +1,13 @@
-import { notFound } from 'next/navigation'
+import { cacheTag } from 'next/cache'
+import { notFound, redirect } from 'next/navigation'
+import { createClientAnonymous } from './supabase/anon'
 import { createClient } from './supabase/server'
 
 export const getProfile = async () => {
   const supabase = await createClient()
   const { data, error } = await supabase.auth.getClaims()
 
-  if (error) throw error
+  if (error) redirect('/')
   if (!data?.claims) return null
 
   const profileResponse = await supabase
@@ -14,18 +16,22 @@ export const getProfile = async () => {
     .eq('id', data.claims.sub)
     .single()
 
-  if (profileResponse.error) throw error
+  if (profileResponse.error) redirect('/')
 
   return profileResponse.data
 }
 
 export const getCategories = async () => {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('category').select('*')
+  'use cache'
+  cacheTag('category')
 
-  if (error) throw error
+  const supabase = createClientAnonymous()
 
-  return data
+  const { data: categories, error } = await supabase.from('category').select('*')
+
+  if (error) notFound()
+
+  return { categories }
 }
 
 export const getArticle = async ({
@@ -35,7 +41,10 @@ export const getArticle = async ({
   article_id: string
   category_id: string
 }) => {
-  const supabase = await createClient()
+  'use cache'
+  cacheTag('article', article_id, category_id)
+
+  const supabase = await createClientAnonymous()
   const { data: article, error } = await supabase
     .from('article')
     .select(`*, profile(*), category(*), comment(*, profile(*))`)
@@ -45,5 +54,26 @@ export const getArticle = async ({
 
   if (error) notFound()
 
-  return article
+  return { article }
+}
+
+export const getCategoryWithArticles = async ({
+  category_id,
+}: {
+  category_id: number | string
+}) => {
+  'use cache'
+  cacheTag('category', String(category_id))
+
+  const supabase = createClientAnonymous()
+
+  const { data: categoryWithArticles, error } = await supabase
+    .from('category')
+    .select(`*, article(*, profile(*))`)
+    .eq('id', Number(category_id))
+    .single()
+
+  if (error) notFound()
+
+  return { categoryWithArticles }
 }

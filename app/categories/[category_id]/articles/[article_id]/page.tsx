@@ -3,8 +3,7 @@ import { SpinnerSkeleton } from '@/components/skeletons'
 import { Button } from '@/components/ui/button'
 import { Shimmer } from '@/components/ui/shimmer'
 import { getArticle } from '@/lib/apis'
-import { createClient } from '@/lib/supabase/server'
-import { formatDate } from '@/lib/utils'
+import { formatDate, getImagePublicURL } from '@/lib/utils'
 import { ArrowLeftIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,9 +11,9 @@ import { Suspense } from 'react'
 import { UserProfileWithCommentForm } from './user-profile-with-comment-form'
 import { VideoTTS } from './video-tts'
 
-export default async function Page({
-  params,
-}: PageProps<'/categories/[category_id]/articles/[article_id]'>) {
+type Params = PageProps<'/categories/[category_id]/articles/[article_id]'>
+
+export default async function Page({ params }: Params) {
   return (
     <div>
       <Suspense fallback={<SpinnerSkeleton />}>
@@ -24,17 +23,19 @@ export default async function Page({
   )
 }
 
-const Contents = async ({
-  params,
+const Contents = async ({ params }: { params: Params['params'] }) => {
+  return <CachedContents params={await params} />
+}
+
+const CachedContents = async ({
+  params: { article_id, category_id },
 }: {
-  params: PageProps<'/categories/[category_id]/articles/[article_id]'>['params']
+  params: Awaited<PageProps<'/categories/[category_id]/articles/[article_id]'>['params']>
 }) => {
-  const supabase = await createClient()
-  const { category_id, article_id } = await params
-  const article = await getArticle({ article_id, category_id })
+  const { article } = await getArticle({ article_id, category_id })
 
   return (
-    <div className='max-w-3xl mx-auto space-y-12'>
+    <div className='max-w-2xl mx-auto space-y-12'>
       <Button variant='neutral-subtle' asChild>
         <Link href={`/categories/${article.category_id}`}>
           <ArrowLeftIcon /> 돌아가기
@@ -68,10 +69,10 @@ const Contents = async ({
 
       <Shimmer className='aspect-video w-full'>
         <Image
-          src={
-            supabase.storage.from('article_thumbnails').getPublicUrl(article.thumbnail_image).data
-              .publicUrl
-          }
+          src={getImagePublicURL({
+            bucketName: 'article_thumbnails',
+            imagePath: article.thumbnail_image,
+          })}
           alt={`${article.title} thumbnail image`}
           width={600}
           height={400}

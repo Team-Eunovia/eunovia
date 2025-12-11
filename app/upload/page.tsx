@@ -16,10 +16,8 @@ export default async function Page() {
 
 const Contents = async () => {
   const profile = await getProfile()
-
   if (!profile) redirect('/')
-
-  const categories = await getCategories()
+  const { categories } = await getCategories()
 
   return (
     <div className='max-w-3xl mx-auto'>

@@ -1,9 +1,7 @@
 import { Book } from '@/components/book'
-import { CategoryBookSkeleton } from '@/components/skeletons'
 import { getCategories } from '@/lib/apis'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Suspense } from 'react'
 
 export default function Page() {
   return (
@@ -18,10 +16,10 @@ export default function Page() {
               글은 다시 <span className='underline underline-offset-8'>사유</span>를 불러옵니다.
             </span>
           </p>
-          <p className='text-xl md:text-2xl tracking-tight text-foreground/80'>
+          {/* <p className='text-xl md:text-2xl tracking-tight text-foreground/80'>
             AI가 <span className='text-foreground font-semibold'>완벽</span>을 만들 때, 인간은
             <span className='text-foreground font-semibold'> 불완전함</span>으로 영감을 나눕니다.
-          </p>
+          </p> */}
         </div>
 
         <Image
@@ -41,16 +39,14 @@ export default function Page() {
           </p>
         </div>
 
-        <Suspense fallback={<CategoryBookSkeleton />}>
-          <CategoryBooks />
-        </Suspense>
+        <CategoryBooks />
       </div>
     </div>
   )
 }
 
 const CategoryBooks = async () => {
-  const categories = await getCategories()
+  const { categories } = await getCategories()
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 md:grid-cols-3'>
